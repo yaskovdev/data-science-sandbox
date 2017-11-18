@@ -1,3 +1,4 @@
+import breeze.linalg.DenseVector
 import neuroflow.application.plugin.Notation._
 import neuroflow.core.Activator._
 import neuroflow.core._
@@ -41,32 +42,33 @@ object Main {
       learningRate = {
         case (_, _) => 1.0
       },
-      verbose = false,
-      prettyPrint = true,
-      iterations = 10000,
+      iterations = 100,
       lossFuncOutput = None)
     val net = Network(Input(126) :: Dense(127, f) :: Output(2, f) :: HNil, settings)
 
-    val xs = Seq(->(0.0, 0.0), ->(0.0, 1.0), ->(1.0, 0.0), ->(1.0, 1.0))
-    val ys = Seq(->(0.0), ->(1.0), ->(1.0), ->(0.0))
+    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = read()
+    val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))
+    val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
+    net.train(in, out)
 
-    net.train(xs, ys)
-
-    val x = ->(1.0, 0.0)
+    val x = ->(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     val result = net(x)
     println(result)
   }
 
-  private def read(): Seq[Seq[Double]] = {
+  private def read(): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
     val iterator: Iterator[Seq[String]] = Source.fromResource("agaricus-lepiota.data").getLines().map(_.split(",").toSeq)
-    iterator.map(l => asInput(l)).toSeq
+    val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => featureVectorAsInput(l)).toSeq
+    seq.unzip
   }
 
-  private def asInput(featureVector: Seq[String]) = {
-    featureVector.zipWithIndex.flatMap { case (feature, index) => v(feature, t(index)) }
+  private def featureVectorAsInput(featureVector: Seq[String]): (Seq[Double], Seq[Double]) = {
+    val input = featureVector.tail.zipWithIndex.flatMap { case (feature, index) => featureAsInput(feature, t(index)) }
+    val output = if (featureVector.head == "e") Seq(1.0, 0.0) else Seq(0.0, 1.0)
+    (input, output)
   }
 
-  private def v(value: String, values: Seq[String]): Seq[Double] = {
-    values.map(v => if (v == value) 1.0 else 0.0)
+  private def featureAsInput(feature: String, possibleValues: Seq[String]): Seq[Double] = {
+    possibleValues.map(v => if (v == feature) 1.0 else 0.0)
   }
 }
