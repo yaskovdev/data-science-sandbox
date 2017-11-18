@@ -39,10 +39,7 @@ object Main {
     implicit val wp = neuroflow.core.WeightProvider.FFN[Double].random(-1, 1)
     val f = Sigmoid
     val settings = Settings[Double](
-      learningRate = {
-        case (_, _) => 1.0
-      },
-      iterations = 100,
+      iterations = 500,
       lossFuncOutput = None)
     val net = Network(Input(126) :: Dense(127, f) :: Output(2, f) :: HNil, settings)
 
@@ -57,7 +54,7 @@ object Main {
   }
 
   private def read(): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
-    val iterator: Iterator[Seq[String]] = Source.fromResource("agaricus-lepiota.data").getLines().map(_.split(",").toSeq)
+    val iterator: Iterator[Seq[String]] = Source.fromResource("training.data").getLines().map(_.split(",").toSeq)
     val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => featureVectorAsInput(l)).toSeq
     seq.unzip
   }
