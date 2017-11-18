@@ -1,0 +1,14 @@
+group 'com.yaskovdev'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'scala'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.4'
+    compile 'com.zenecture:neuroflow-core_2.12:1.3.3'
+    compile 'com.zenecture:neuroflow-application_2.12:1.3.3'
+}
