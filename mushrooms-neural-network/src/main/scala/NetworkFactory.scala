@@ -8,8 +8,8 @@ object NetworkFactory {
   def createNetwork(implicit weightProvider: WeightProvider[Double]): FFN[Double] = {
     val f = Sigmoid
     val settings = Settings[Double](
-      iterations = 600,
+      iterations = 900,
       lossFuncOutput = None)
-    Network(Input(126) :: Dense(127, f) :: Output(2, f) :: HNil, settings)
+    Network(Input(126) :: Dense(10, f) :: Output(2, f) :: HNil, settings)
   }
 }

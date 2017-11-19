@@ -7,7 +7,7 @@ object BatchEvaluation {
   def main(args: Array[String]): Unit = {
     implicit val weightProvider = IO.File.readDouble("build/mushrooms.json")
     val net = NetworkFactory.createNetwork(weightProvider)
-    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = Util.read("test.data")
+    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = Util.read("evaluation.data")
     val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))
     val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
 
