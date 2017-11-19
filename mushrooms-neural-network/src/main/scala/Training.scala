@@ -1,14 +1,11 @@
 import breeze.linalg.DenseVector
 import neuroflow.application.plugin.IO
-import neuroflow.core.Activator._
-import neuroflow.core._
-import neuroflow.nets.cpu.DenseNetwork._
-import shapeless._
+import neuroflow.core.WeightProvider.FFN
 
 import scala.io.Source
 
 
-object Main {
+object Training {
 
   val t = Seq(
     Seq("b", "c", "x", "f", "k", "s"),
@@ -36,34 +33,20 @@ object Main {
   )
 
   def main(args: Array[String]): Unit = {
-    implicit val wp = neuroflow.core.WeightProvider.FFN[Double].random(-1, 1)
-    val f = Sigmoid
-    val settings = Settings[Double](
-      iterations = 500,
-      lossFuncOutput = None)
-    val net = Network(Input(126) :: Dense(127, f) :: Output(2, f) :: HNil, settings)
+    implicit val randomWeightProvider = FFN[Double].random(-1, 1)
+    val net = NetworkFactory.createNetwork(randomWeightProvider)
 
     val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = read("training.data")
     val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))
     val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
     net.train(in, out)
 
-    IO.File.write(net.weights, "c:/dev/mushrooms.nf")
+    IO.File.write(net.weights, "build/mushrooms.json")
   }
 
   private def read(resource: String): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
     val iterator: Iterator[Seq[String]] = Source.fromResource(resource).getLines().map(_.split(",").toSeq)
-    val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => featureVectorAsInput(l)).toSeq
+    val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => Util.featureVectorAsInputOutputPair(l)).toSeq
     seq.unzip
-  }
-
-  private def featureVectorAsInput(featureVector: Seq[String]): (Seq[Double], Seq[Double]) = {
-    val input = featureVector.tail.zipWithIndex.flatMap { case (feature, index) => featureAsInput(feature, t(index)) }
-    val output = if (featureVector.head == "e") Seq(1.0, 0.0) else Seq(0.0, 1.0)
-    (input, output)
-  }
-
-  private def featureAsInput(feature: String, possibleValues: Seq[String]): Seq[Double] = {
-    possibleValues.map(v => if (v == feature) 1.0 else 0.0)
   }
 }
