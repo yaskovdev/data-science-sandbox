@@ -1,5 +1,5 @@
 import breeze.linalg.DenseVector
-import neuroflow.application.plugin.Notation._
+import neuroflow.application.plugin.IO
 import neuroflow.core.Activator._
 import neuroflow.core._
 import neuroflow.nets.cpu.DenseNetwork._
@@ -43,18 +43,16 @@ object Main {
       lossFuncOutput = None)
     val net = Network(Input(126) :: Dense(127, f) :: Output(2, f) :: HNil, settings)
 
-    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = read()
+    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = read("training.data")
     val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))
     val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
     net.train(in, out)
 
-    val x = ->(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-    val result = net(x)
-    println(result)
+    IO.File.write(net.weights, "c:/dev/mushrooms.nf")
   }
 
-  private def read(): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
-    val iterator: Iterator[Seq[String]] = Source.fromResource("training.data").getLines().map(_.split(",").toSeq)
+  private def read(resource: String): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
+    val iterator: Iterator[Seq[String]] = Source.fromResource(resource).getLines().map(_.split(",").toSeq)
     val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => featureVectorAsInput(l)).toSeq
     seq.unzip
   }
