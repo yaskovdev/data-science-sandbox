@@ -2,8 +2,6 @@ import breeze.linalg.DenseVector
 import neuroflow.application.plugin.IO
 import neuroflow.core.WeightProvider.FFN
 
-import scala.io.Source
-
 
 object Training {
 
@@ -36,17 +34,11 @@ object Training {
     implicit val randomWeightProvider = FFN[Double].random(-1, 1)
     val net = NetworkFactory.createNetwork(randomWeightProvider)
 
-    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = read("training.data")
+    val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = Util.read("training.data")
     val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))
     val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
     net.train(in, out)
 
     IO.File.write(net.weights, "build/mushrooms.json")
-  }
-
-  private def read(resource: String): (Seq[Seq[Double]], Seq[Seq[Double]]) = {
-    val iterator: Iterator[Seq[String]] = Source.fromResource(resource).getLines().map(_.split(",").toSeq)
-    val seq: Seq[(Seq[Double], Seq[Double])] = iterator.map(l => Util.featureVectorAsInputOutputPair(l)).toSeq
-    seq.unzip
   }
 }
