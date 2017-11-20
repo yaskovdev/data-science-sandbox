@@ -10,6 +10,7 @@ object BatchEvaluation {
     var correct = 0
     val nearestNeighbor = new NearestNeighbor()
     val evaluationData = resourceData.read("evaluation.data")
+    val size = evaluationData.size
     for (vector <- evaluationData) {
       val expected: String = vector.head
       val actual: String = nearestNeighbor.nearest(vector.tail, trainingData, 3)
@@ -17,9 +18,9 @@ object BatchEvaluation {
         correct += 1
       }
       current += 1
-      println("Processed " + current + " of " + evaluationData.size + ", number of correct answers is " + correct)
+      println(s"Processed $current of $size, number of errors is ${current - correct}")
     }
-    val rate = correct.asInstanceOf[Double] / evaluationData.size
-    println("Rate of correct guesses is " + rate)
+    val rate = correct.asInstanceOf[Double] / size
+    println(s"Rate of correct guesses is $rate")
   }
 }
