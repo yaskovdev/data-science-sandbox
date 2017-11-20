@@ -2,3 +2,5 @@
 *.iml
 activemq-data
 target
+build
+.gradle
