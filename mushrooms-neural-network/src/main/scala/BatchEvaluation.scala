@@ -22,6 +22,6 @@ object BatchEvaluation {
       }
     }
     val rate = correct.asInstanceOf[Double] / total
-    println("Rate of correct guesses is " + rate)
+    println("Rate of correct answers is " + rate)
   }
 }

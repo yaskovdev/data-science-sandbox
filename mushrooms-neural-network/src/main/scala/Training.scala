@@ -23,7 +23,7 @@ object Training {
     Seq("n", "b", "c", "g", "o", "p", "e", "w", "y"),
     Seq("n", "b", "c", "g", "o", "p", "e", "w", "y"),
     Seq("p", "u"),
-    Seq("n", "o", "w", "y"),
+    Seq("b", "o", "w", "y"),
     Seq("n", "o", "t"),
     Seq("c", "e", "f", "l", "n", "p", "s", "z"),
     Seq("k", "n", "b", "h", "r", "o", "u", "w", "y"),

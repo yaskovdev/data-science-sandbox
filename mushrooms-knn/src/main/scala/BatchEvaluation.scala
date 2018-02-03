@@ -21,6 +21,6 @@ object BatchEvaluation {
       println(s"Processed $current of $size, number of errors is ${current - correct}")
     }
     val rate = correct.asInstanceOf[Double] / size
-    println(s"Rate of correct guesses is $rate")
+    println(s"Rate of correct answers is $rate")
   }
 }
