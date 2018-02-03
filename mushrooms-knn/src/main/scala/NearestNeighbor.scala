@@ -11,7 +11,7 @@ class NearestNeighbor {
   //
 
   private def distance(x: Seq[String], y: Seq[String]): Double = {
-    require(x.size == y.size, "mismatch between vector sizes")
+    require(x.lengthCompare(y.size) == 0, "mismatch between vector sizes")
     x.zip(y).foldLeft(0.0)((sum, pair) => if (pair._1 == pair._2) sum else sum + 1.0)
   }
 }

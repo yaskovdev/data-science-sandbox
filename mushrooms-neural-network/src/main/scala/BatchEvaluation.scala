@@ -1,11 +1,11 @@
 import breeze.linalg.DenseVector
 import neuroflow.application.plugin.IO
-import neuroflow.core.Network
+import neuroflow.core.{Network, WeightProvider}
 
 object BatchEvaluation {
 
   def main(args: Array[String]): Unit = {
-    implicit val weightProvider = IO.File.readDouble("build/mushrooms.json")
+    implicit val weightProvider: WeightProvider[Double] = IO.File.readDouble("build/mushrooms.json")
     val net = NetworkFactory.createNetwork(weightProvider)
     val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = Util.read("evaluation.data")
     val in: Seq[DenseVector[Double]] = input.map(seq => new DenseVector[Double](seq.toArray))

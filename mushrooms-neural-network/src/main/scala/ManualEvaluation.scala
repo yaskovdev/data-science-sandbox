@@ -1,6 +1,6 @@
 import breeze.linalg.DenseVector
 import neuroflow.application.plugin.IO
-import neuroflow.core.Network
+import neuroflow.core.{Network, WeightProvider}
 
 import scala.io.StdIn
 
@@ -13,7 +13,7 @@ object ManualEvaluation {
     val featureVector: Seq[String] = string.split(",").toSeq
     val (input, _): (Seq[Double], Seq[Double]) = Util.featureVectorAsInputOutputPair(featureVector)
 
-    implicit val weightProvider = IO.File.readDouble("build/mushrooms.json")
+    implicit val weightProvider: WeightProvider[Double] = IO.File.readDouble("build/mushrooms.json")
     val net = NetworkFactory.createNetwork(weightProvider)
     val result: Network.Vector[Double] = net(new DenseVector[Double](input.toArray))
     println(Util.interpretResult(result) + " (" + result + ")")

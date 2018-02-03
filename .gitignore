@@ -4,3 +4,4 @@ activemq-data
 target
 build
 .gradle
+out/

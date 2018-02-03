@@ -1,5 +1,6 @@
 import breeze.linalg.DenseVector
 import neuroflow.application.plugin.IO
+import neuroflow.core.WeightProvider
 import neuroflow.core.WeightProvider.FFN
 
 
@@ -31,7 +32,7 @@ object Training {
   )
 
   def main(args: Array[String]): Unit = {
-    implicit val randomWeightProvider = FFN[Double].random(-1, 1)
+    implicit val randomWeightProvider: WeightProvider[Double] = FFN[Double].random(-1, 1)
     val net = NetworkFactory.createNetwork(randomWeightProvider)
 
     val (input: Seq[Seq[Double]], output: Seq[Seq[Double]]) = Util.read("training.data")
@@ -39,6 +40,6 @@ object Training {
     val out: Seq[DenseVector[Double]] = output.map(seq => new DenseVector[Double](seq.toArray))
     net.train(in, out)
 
-    IO.File.write(net.weights, "build/mushrooms.json")
+    IO.File.write(net.weights, "build/mushrooms.json") // TODO: what if build does not exist?
   }
 }
